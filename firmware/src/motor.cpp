@@ -2,7 +2,7 @@
 #include "pins.h"
 
 void Motor::init() {
-  analogWriteResolution(this->pwm_resolution);
+  analogWriteResolution(motor_pin, this->pwm_resolution);
   pinMode(motor_pin, OUTPUT);
   this->set_motor_speed(0);
 }

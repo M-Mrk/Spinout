@@ -1,10 +1,13 @@
 #include "drawing.h"
 #include "Arduino.h"
+
 #include "FastLED.h"
 #include "pins.h"
 #include "motor.h"
 
 #include <frames.h>
+
+#define DEBUG
 
 constexpr uint16_t kLedCount = 36;
 constexpr uint16_t kArmCount = 4;
