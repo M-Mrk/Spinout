@@ -57,15 +57,15 @@ Open the web interface in your browser where you can:
 
 ## PCB and Parts
 
-| Reference | Qty | Value | Description | Price EUR | Pack Info | Link |
-| ---------- | --: | ----- | ----------- | --------: | --------- | ---- |
-| U1 | 1 | Seeed Studio XIAO ESP32-S3 | Main microcontroller | 6.90 | 1 pc | Buy |
-| U2 | 1 | DRV8833 | Drives the DC motor | 2.50 | 1 pc | Buy |
-| M1 | 1 | DC Motor | Main rotating motor | 9.99 | 1 pc | Buy |
-| D1 | 2 | WS2812B LED Strip | Addressable LEDs mounted on both rotor arms | 5.00 | 2 pcs | Buy |
-| H1 | 1 | Hall Effect Sensor | Rotor zero-point detection and rpm measurement | 0.60 | 5 pcs | Buy |
-| Battery | 1 | Li-Po Battery | Powers the system | 8.90 | 1 pc | Buy |
-| U3 | 2 | Buck Converter | Generates the required voltages | 2.00 | 2 pcs | Buy |
+| Reference | Qty | Value | Description | 
+| ---------- | --: | ----- | ----------- | 
+| U1 | 1 | Seeed Studio XIAO ESP32-S3 | Main microcontroller | 
+| U2 | 1 | DRV8833 | Drives the DC motor |
+| M1 | 1 | DC Motor | Main rotating motor |
+| D1 | 2 | WS2812B LED Strip | Addressable LEDs mounted on both rotor arms |
+| H1 | 1 | Hall Effect Sensor | Rotor zero-point detection and rpm measurement |
+| Battery | 1 | Li-Po Battery | Powers the system |
+| U3 | 2 | Buck Converter | Generates the required voltages |
 
 
 ## Soldering
