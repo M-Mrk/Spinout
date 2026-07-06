@@ -7,6 +7,7 @@
 #include <html.h>
 
 #include "motor.h"
+#include "frames.h"
 #include "drawing.h"
 
 #define DEBUG
@@ -16,6 +17,21 @@ IRAM_ATTR void hallISR() {
   motor.hall_sensor.update();
 };
 
+ImagePtr g_current_image = test_image;  // default preset
+
+// Helper to select preset by name
+bool select_preset(const String& preset) {
+    if (preset == "test") {
+        g_current_image = test_image;
+    } else if (preset == "soup") {
+        g_current_image = soup_image;
+    } else if (preset == "hackclub") {
+        g_current_image = hack_image;
+    } else {
+        return false; // unknown preset
+    }
+    return true;
+}
 
 constexpr char kAccessPointName[] = "POV-Fan";
 constexpr char kAccessPointPassword[] = "povfan123";
@@ -75,6 +91,16 @@ void handle_root() {
 }
 
 void handle_start() {
+  if (server.hasArg("preset")) {
+    String preset = server.arg("preset");
+    if (!select_preset(preset)) {
+      Serial.print("Unknown preset requested: ");
+      Serial.println(preset);
+      server.send(400, "application/json", "{\"ok\":false,\"error\":\"unknown-preset\"}");
+      return;
+    }
+  }
+
   if (g_fan_running && remaining_display_ms() > 0) {
     server.send(200, "application/json", "{\"ok\":true,\"started\":false,\"reason\":\"already-running\"}");
     return;
@@ -107,6 +133,7 @@ void setup() {
   wl_status_t status;
   for (int i = 0; i < 10; ++i) {
     status = WiFi.begin("VankeYunCheng", "SJGS6666");
+    delay(1000);
     if (status == WL_CONNECTED) {
       break;
     }
@@ -192,7 +219,15 @@ void loop() {
     return;
   }
 
-  draw_for(display_deadline_ms, motor, service_web, &g_fan_running);
+  while (digitalRead(hall_sensor_pin) == LOW) { //  Wait till arm 1 is on the bottom to align the image
+    delayMicroseconds(1);
+    if (!g_fan_running || remaining_display_ms() == 0) {
+      Serial.println("Fan stopped or display time ended while waiting for arm 1 to align.");
+      return;
+    }
+  }
+
+  draw_for(g_current_image, display_deadline_ms, motor, service_web, &g_fan_running);
 
   set_fan_running(false);
 

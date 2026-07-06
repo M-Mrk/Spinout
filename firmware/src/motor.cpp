@@ -88,16 +88,17 @@ void HallSensor::update() {
     this->last_time = current_time;
 }
 
-#define NUM_MAGNETS 2
+#define NUM_MAGNETS 1
 float HallSensor::calculate_rps() {
     if (this->last_delta == 0) {
         return 0.0f;
     }
     float period_in_seconds = this->last_delta / 1000000.0f;
     float frequency = 1.0f / period_in_seconds;
-    float rps = frequency * NUM_MAGNETS;
+    float rps = frequency / NUM_MAGNETS;
     return rps;
 }
+
 long HallSensor::micros_till_next_degree() {
     if (this->last_delta == 0) {
         return 0;
@@ -114,4 +115,13 @@ long HallSensor::micros_till_next_degree() {
         remaining_micros = 0;
     }
     return remaining_micros;
+}
+
+long HallSensor::micros_till_next_step(uint16_t steps_per_rev) {
+    float rps = this->calculate_rps();
+    if (rps == 0) return 0;
+    float micros_per_step = 1000000.0f / (rps * steps_per_rev);
+    uint32_t micros_since_last_hall = micros() - this->last_time;
+    long remaining = static_cast<long>(micros_per_step - micros_since_last_hall);
+    return remaining > 0 ? remaining : 0;
 }

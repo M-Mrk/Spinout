@@ -15,7 +15,14 @@ static const char HTML_CONTENT[] = R"rawliteral(
         .crop-wrapper { width: 288px; height: 288px; border-radius: 50%; border: 4px solid var(--accent); margin: 0 auto 20px auto; overflow: hidden; position: relative; background: #000; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); display: none; touch-action: none; cursor: grab; }
         .crop-wrapper:active { cursor: grabbing; }
         #source-img { position: absolute; transform-origin: top left; pointer-events: none; }
-        
+
+        .preset-group { margin-top: 20px; text-align: left; }
+        .preset-label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 8px; font-weight: 600; }
+        .preset-options { display: flex; gap: 6px; background: #0f172a; padding: 4px; border-radius: 12px; }
+        .preset-btn { flex: 1; padding: 8px 6px; border: none; border-radius: 9px; background: transparent; color: #94a3b8; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.15s; }
+        .preset-btn.active { background: var(--accent); color: #fff; box-shadow: 0 2px 6px rgba(59, 130, 246, 0.4); }
+        .preset-btn:hover:not(.active) { color: #f8fafc; }
+
         .action-buttons { display: flex; gap: 10px; margin-top: 20px; }
         .btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; color: white; transition: 0.2s; }
         .start-btn { background: #10b981; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3); }
@@ -33,6 +40,15 @@ static const char HTML_CONTENT[] = R"rawliteral(
 
     <p id="connection" style="margin-top: 0; color: #94a3b8; font-size: 14px;">Connecting to fan...</p>
 
+    <div class="preset-group">
+        <label class="preset-label">Image preset</label>
+        <div class="preset-options" id="preset-options">
+            <button class="preset-btn active" data-preset="test">Test image</button>
+            <button class="preset-btn" data-preset="soup">Soup</button>
+            <button class="preset-btn" data-preset="hackclub">Hack Club</button>
+        </div>
+    </div>
+
     <div class="action-buttons">
         <button class="btn start-btn" id="start-btn">Start</button>
         <button class="btn stop-btn" id="stop-btn">Stop</button>
@@ -46,6 +62,16 @@ static const char HTML_CONTENT[] = R"rawliteral(
     const connection = document.getElementById('connection');
     const startButton = document.getElementById('start-btn');
     const stopButton = document.getElementById('stop-btn');
+    const presetOptions = document.getElementById('preset-options');
+
+    let selectedPreset = 'test';
+
+    presetOptions.addEventListener('click', (e) => {
+        const btn = e.target.closest('.preset-btn');
+        if (!btn) return;
+        selectedPreset = btn.dataset.preset;
+        presetOptions.querySelectorAll('.preset-btn').forEach(b => b.classList.toggle('active', b === btn));
+    });
 
     async function refreshStatus() {
         try {
@@ -64,7 +90,7 @@ static const char HTML_CONTENT[] = R"rawliteral(
                 parts.push(`Remaining: ${remainingSeconds.toFixed(1)}s`);
             }
             parts.push(`RPM: ${Number(data.rpm).toFixed(1)}`);
-            parts.push(`Speed: ${data.motor_speed}`);
+            parts.push(`Speed: ${data.motor_speed}%`);
             status.innerText = parts.join(' | ');
             status.style.color = data.displaying ? '#4ade80' : '#94a3b8';
             startButton.disabled = Boolean(data.displaying);
@@ -93,7 +119,7 @@ static const char HTML_CONTENT[] = R"rawliteral(
         }
     }
 
-    startButton.addEventListener('click', () => sendCommand('/start'));
+    startButton.addEventListener('click', () => sendCommand(`/start?preset=${encodeURIComponent(selectedPreset)}`));
     stopButton.addEventListener('click', () => sendCommand('/stop'));
 
     refreshStatus();

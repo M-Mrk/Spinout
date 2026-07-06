@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 
-#define arm1_pin GPIO_NUM_14
+#define arm1_pin D1
 #define arm2_pin D2
 #define arm3_pin D3
 #define arm4_pin D4

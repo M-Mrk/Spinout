@@ -16,8 +16,8 @@ CRGB arm3[kLedCount];
 CRGB arm4[kLedCount];
 CRGB* arms[] = {arm1, arm2, arm3, arm4};
 
-int g_currentTopArm = 0;
-int g_current_order[4] = {0, 1, 2, 3};
+int g_currentTopArm = 2;
+int g_current_order[4] = {2, 3, 0, 1};
 
 void init_leds() {
     FastLED.addLeds<WS2812, arm1_pin, GRB>(arm1, kLedCount);
@@ -42,14 +42,14 @@ CRGB extract_color(uint32_t color) { // format: 0x00RRGGBB
   return CRGB(color >> 16, (color >> 8) & 0xFF, color & 0xFF);
 }
 
-void draw_frame(uint16_t degree) {
+void draw_frame(ImagePtr image, uint16_t degree) {
   long start_time = micros();
   for (uint16_t arm = 0; arm < kArmCount; ++arm) {
     uint16_t arm_index = g_current_order[arm];
     uint16_t frame_degree = (degree + (arm * (kFrameCount / kArmCount))) % kFrameCount;
 
     for (uint16_t led = 0; led < kLedCount; ++led) {
-      uint32_t color = test_image[frame_degree][led];
+      uint32_t color = image[frame_degree][led];
       arms[arm_index][led] = extract_color(color);
     }
   }
@@ -60,7 +60,7 @@ void draw_frame(uint16_t degree) {
   #endif
 }
 
-void draw_for(uint32_t end_time_ms, Motor& motor, void (*service_web)(), volatile bool* active) {
+void draw_for(ImagePtr image, uint32_t end_time_ms, Motor& motor, void (*service_web)(), volatile bool* active) {
   #ifdef DEBUG
     Serial.println("Drawing until deadline.");
   #endif
@@ -87,11 +87,15 @@ void draw_for(uint32_t end_time_ms, Motor& motor, void (*service_web)(), volatil
         service_web();
       }
 
-      draw_frame(degree);
+      draw_frame(image, degree);
       long wait_time = motor.hall_sensor.micros_till_next_degree();
       if (wait_time > 0) {
         delayMicroseconds(wait_time);
-      }  
+      } else {
+        #ifdef DEBUG
+          Serial.println("Warning: Negative wait time, skipping delay.");
+        #endif
+      }
     }
 
     if (active != nullptr && !*active) {

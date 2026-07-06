@@ -9,6 +9,7 @@ public:
     void update();
     float calculate_rps();
     long micros_till_next_degree();
+    long micros_till_next_step(uint16_t steps_per_rev);
     
     unsigned long get_last_delta() const { return last_delta; }
     unsigned long get_pulse_count() const { return pulse_count; }
@@ -32,7 +33,7 @@ public:
 
     int get_current_speed() const { return current_speed; }
 private:
-    int target_rpm = 1000;
+    int target_rpm = 200;
     float target_rpm_tolerance = 0.05f;
     int pwm_resolution = 8;
     int max_pwm = 255;
