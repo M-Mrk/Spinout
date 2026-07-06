@@ -78,6 +78,8 @@ Recommended order:
 4. Connectors
 5. Power circuitry
 
+Follow the [diagram](wiring-diagram.png)
+
 ## Case
 
 3D print the provided STL files.
