@@ -1,6 +1,6 @@
 # Spinout
 
-A custom ESP32-C3-based persistence of vision (POV) display capable of displaying images in mid-air while spinning.
+A custom ESP32-S3-based persistence of vision (POV) display capable of displaying images in mid-air while spinning.
 
 ## Features
 
@@ -15,7 +15,7 @@ A custom ESP32-C3-based persistence of vision (POV) display capable of displayin
 
 ## Hardware
 
-- Seeed Studio XIAO ESP32-C3
+- Seeed Studio XIAO ESP32-S3
 - DC motor with motor driver
 - Hall effect sensor for zero-point detection
 - Addressable LED strips mounted on both rotor arms
@@ -39,12 +39,8 @@ Including **SOUP**.
 Power on the device and connect to its Wi-Fi network.
 
 Open the web interface in your browser where you can:
-- upload new images,
-- scale and position them,
+- select the image preset.
 - start or stop the motor.
-
-The Hall effect sensor continuously detects the zero position of the rotor to ensure every frame is displayed at exactly the correct angle.
-
 
 ## Images
 
@@ -63,11 +59,11 @@ The Hall effect sensor continuously detects the zero position of the rotor to en
 
 | Reference | Qty | Value | Description | Price EUR | Pack Info | Link |
 | ---------- | --: | ----- | ----------- | --------: | --------- | ---- |
-| U1 | 1 | Seeed Studio XIAO ESP32-C3 | Main microcontroller | 6.90 | 1 pc | Buy |
-| U2 | 1 | Motor Driver | Drives the DC motor | 2.50 | 1 pc | Buy |
+| U1 | 1 | Seeed Studio XIAO ESP32-S3 | Main microcontroller | 6.90 | 1 pc | Buy |
+| U2 | 1 | DRV8833 | Drives the DC motor | 2.50 | 1 pc | Buy |
 | M1 | 1 | DC Motor | Main rotating motor | 9.99 | 1 pc | Buy |
 | D1 | 2 | WS2812B LED Strip | Addressable LEDs mounted on both rotor arms | 5.00 | 2 pcs | Buy |
-| H1 | 1 | Hall Effect Sensor | Rotor zero-point detection | 0.60 | 5 pcs | Buy |
+| H1 | 1 | Hall Effect Sensor | Rotor zero-point detection and rpm measurement | 0.60 | 5 pcs | Buy |
 | Battery | 1 | Li-Po Battery | Powers the system | 8.90 | 1 pc | Buy |
 | U3 | 2 | Buck Converter | Generates the required voltages | 2.00 | 2 pcs | Buy |
 
@@ -76,12 +72,11 @@ The Hall effect sensor continuously detects the zero position of the rotor to en
 
 Recommended order:
 
-1. Small passive components
-2. Hall effect sensor
-3. Motor driver
-4. XIAO ESP32-C3
-5. Connectors
-6. Power circuitry
+1. Hall effect sensor
+2. Motor driver
+3. XIAO ESP32-S3
+4. Connectors
+5. Power circuitry
 
 ## Case
 
@@ -89,23 +84,24 @@ Recommended order:
 
 PLA works well for the enclosure, while PETG is recommended for the rotor components because of the mechanical stress during rotation.
 
+## Custom images
+You can generate your own image using the python script in the `converter` folder. Just replace on of the existing presets in `firmware/include/frames.h` with the resulting `image_frames` in `frames.h`. Then build the firmware and flash it.
+
 ## Programming
 
-**Install the following libraries** (available in the firmware/libraries folder or through the Arduino Library Manager):
+**Flashing** is straightforward with PlatformIO:
 
-- **
-- **
-- **
-- **
-
-**Flashing** is straightforward:
-
-1. Open `main.ino` from the `firmware` folder.
-2. Select **Seeed Studio XIAO ESP32-C3**.
-3. Upload the firmware.
+1. Open the `firmware` folder.
+2. Flash the firmware with pio (`pio run -t upload`).
 
 After flashing, connect to the Wi-Fi network created by the device and open the web interface.
 
+**But** you might not want to download pio and the entire toolchain. Then you can grab all the binaries from the [releases](https://github.com/M-Mrk/Spinout/releases/latest). And flash them with the tool of your liking (esptool.py or ESPWebTool). Just follow this table
+| Start Address | Name |
+| ------------- | ---- |
+| 0x0000 | bootloader.bin |
+| 0x8000 | partitions.bin |
+| 0xe000 | firmware.bin |
 
 ## Assembly
 
