@@ -1,7 +1,3 @@
-<img width="2250" height="3450" alt="hero" src="https://github.com/user-attachments/assets/your-image-here" />
-
-
-
 # Spinout
 
 A custom ESP32-C3-based persistence of vision (POV) display capable of displaying images in mid-air while spinning.
@@ -57,9 +53,6 @@ The Hall effect sensor continuously detects the zero position of the rotor to en
 
 
 ### WEB INTERFACE
-
-<img width="1531" height="855" alt="image" src="https://github.com/user-attachments/assets/your-image-here" />
-
 
 ### DEMO VIDEO
 
